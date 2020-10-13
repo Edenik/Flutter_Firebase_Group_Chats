@@ -92,9 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _signupFormKey.currentState.save();
         await authService.signup(_name, _email, _password);
       }
-      setState(() {
-        _isLoading = false;
-      });
     } on PlatformException catch (err) {
       _showErrorDialog(err.message);
       setState(() {
