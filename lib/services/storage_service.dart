@@ -25,7 +25,7 @@ class StorageService {
     return downloadUrl;
   }
 
-  Future<String> _uploadChatImage(String url, File imageFile) async {
+  Future<String> uploadChatImage(String url, File imageFile) async {
     String imageId = Uuid().v4();
     File image = await _compressImage(imageId, imageFile);
 
