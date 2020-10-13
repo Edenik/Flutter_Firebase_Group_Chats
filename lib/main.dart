@@ -1,18 +1,47 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_chat/models/user_data.dart';
+import 'package:firebase_chat/screens/home_screen.dart';
+import 'package:firebase_chat/screens/login_screen.dart';
+import 'package:firebase_chat/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => UserData(),
+          ),
+          Provider<AuthService>(
+            create: (_) => AuthService(),
+          )
+        ],
+        child: MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Firebase Chat',
+      title: 'Flutter Firebase Group Chats',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.white,
       ),
-      home: HomePage(),
+      home: StreamBuilder<FirebaseUser>(
+        stream: Provider.of<AuthService>(context, listen: false).user,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            Provider.of<UserData>(context, listen: false).currentUserId =
+                snapshot.data.uid;
+
+            return HomeScreen();
+          } else {
+            return LoginScreen();
+          }
+        },
+      ),
     );
   }
 }
