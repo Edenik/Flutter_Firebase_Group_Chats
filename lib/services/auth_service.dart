@@ -18,7 +18,7 @@ class AuthService {
 
       if (authResult.user != null) {
         String token = await _messaging.getToken();
-        userRef.document(authResult.user.uid).setData({
+        usersRef.document(authResult.user.uid).setData({
           'name': name,
           'email': email,
           'token': token,
