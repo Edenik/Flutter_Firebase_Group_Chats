@@ -61,7 +61,7 @@ class DatabaseService {
       'imageUrl': imageUrl,
       'recentMessage': 'Chat created',
       'recentSender': '',
-      'recentTimeStamp': Timestamp.now(),
+      'recentTimestamp': Timestamp.now(),
       'memberIds': memberIds,
       'memberInfo': memberInfo,
       'readStatus': readStatus,
@@ -80,7 +80,8 @@ class DatabaseService {
   }
 
   void setChatRead(BuildContext context, Chat chat, bool read) async {
-    String currentUserId = Provider.of<UserData>(context).currentUserId;
+    String currentUserId =
+        Provider.of<UserData>(context, listen: false).currentUserId;
     chatsRef.document(chat.id).updateData({
       'readStatus.$currentUserId': read,
     });

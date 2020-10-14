@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_chat/models/chat_model.dart';
 import 'package:firebase_chat/models/user_data.dart';
+import 'package:firebase_chat/screens/chat_screen.dart';
 import 'package:firebase_chat/screens/search_users_screen.dart';
 import 'package:firebase_chat/services/auth_service.dart';
 import 'package:firebase_chat/utilities/constants.dart';
@@ -55,9 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         style: readStyle,
       ),
-      onTap: () {}
-      // Navigator.push(context, MaterialPageRoute(builder: (_) => )
-      ,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(chat),
+          ),
+        );
+      },
     );
   }
 
@@ -89,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
         stream: Firestore.instance
             .collection('chats')
             .where('memberIds', arrayContains: currentUserId)
-            .orderBy('recentTimeStamp', descending: true)
+            .orderBy('recentTimestamp', descending: true)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
@@ -97,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CircularProgressIndicator(),
             );
           }
+
           return ListView.separated(
               itemBuilder: (BuildContext context, int index) {
                 Chat chat = Chat.fromDoc(snapshot.data.documents[index]);
