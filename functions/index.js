@@ -62,3 +62,27 @@ exports.addChatMessage = functions.firestore
       }
     }
 });
+
+exports.onUpdateUser = functions.firestore
+  .document('/users/{userId}')
+  .onUpdate(async (snapshot, context) => {
+    const userId = context.params.userId;
+    const userData = snapshot.after.data();
+    const newToken = userData.token;
+
+    // Loop through every chat user is in and update their token
+    return admin
+      .firestore()
+      .collection('chats')
+      .where('memberIds', 'array-contains', userId)
+      .orderBy('recentTimestamp', 'desc')
+      .get()
+      .then(snapshots => {
+        return snapshots.forEach(chatDoc => {
+          const chatData = chatDoc.data();
+          const memberInfo = chatData.memberInfo;
+          memberInfo[userId].token = newToken;
+          chatDoc.ref.update({ memberInfo: memberInfo });
+        });
+      });
+  });

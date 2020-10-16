@@ -42,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
       print('settings registered:  $settings');
     });
+
+    Provider.of<AuthService>(context, listen: false).updateToken();
   }
 
   _buildChat(Chat chat, String currentUserId) {
