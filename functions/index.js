@@ -30,5 +30,35 @@ exports.addChatMessage = functions.firestore
         recentTimestamp: messageData.timestamp,
         readStatus: readStatus
       });
+
+      // Notifications
+      const memberInfo = chatData.memberInfo;
+      const senderId = messageData.senderId;
+      let body = memberInfo[senderId].name;
+      if(messageData.text !== null){
+          body += `: ${messageData.text}`
+      } else {
+          body += ' sent an image'
+      }
+
+      const payload = {
+          notification : {
+              title: chatData['name'],
+              body:body
+          }
+      }
+      const options = {
+        priority: 'high',
+        timeToLive : 60 * 60 * 24
+      }
+
+      for(const userId in memberInfo){
+          if(userId !== senderId){
+              const token = memberInfo[userId].token;
+              if(token !== ''){
+                  admin.messaging().sendToDevice(token, payload, options);
+              }
+          }
+      }
     }
 });
